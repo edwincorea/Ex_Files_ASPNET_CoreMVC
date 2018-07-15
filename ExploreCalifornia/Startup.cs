@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,9 +24,20 @@ namespace ExploreCalifornia
                 app.UseDeveloperExceptionPage();
             }
 
+            app.Use(async (context, next) =>
+            {
+                if(context.Request.Path.Value.StartsWith("/hello"))
+                {
+                    await context.Response.WriteAsync("Hello ASP.NET Core!");
+                }
+
+                await next();
+                
+            });
+
             app.Run(async (context) =>
             {
-                await context.Response.WriteAsync("Hello ASP.NET Core!");
+                await context.Response.WriteAsync(" How are you?");
             });
         }
     }
