@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace ExploreCalifornia
 {
@@ -19,10 +20,20 @@ namespace ExploreCalifornia
         {
             loggerFactory.AddConsole();
 
+            app.UseExceptionHandler("/error.html");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.Use(async (context, next) => 
+            {
+                if (context.Request.Path.Value.Contains("invalid"))
+                    throw new Exception("ERROR!");
+
+                await next();
+            });
 
             app.UseFileServer();
         }
