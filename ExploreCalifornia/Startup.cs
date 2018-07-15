@@ -24,6 +24,8 @@ namespace ExploreCalifornia
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles();
+
             app.Use(async (context, next) =>
             {
                 if(context.Request.Path.Value.StartsWith("/hello"))
