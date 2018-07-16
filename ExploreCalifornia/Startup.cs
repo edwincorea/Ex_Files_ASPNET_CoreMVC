@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -25,9 +24,11 @@ namespace ExploreCalifornia
 
             var configuration = new ConfigurationBuilder()
                 .AddEnvironmentVariables()
+                .AddJsonFile(env.ContentRootPath + "/config.json")
+                .AddJsonFile(env.ContentRootPath + "/config.development.json", true)
                 .Build();
 
-            if (configuration.GetValue<bool>("EnableDeveloperExceptions"))
+            if (configuration.GetValue<bool>("FeatureToggles:EnableDeveloperExceptions"))
             {
                 app.UseDeveloperExceptionPage();
             }
