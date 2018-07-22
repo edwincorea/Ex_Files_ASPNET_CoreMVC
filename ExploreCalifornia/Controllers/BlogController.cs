@@ -8,5 +8,13 @@ namespace ExploreCalifornia.Controllers
         {
             return new ContentResult { Content = "Blog posts" };
         }
+
+        public IActionResult Post(int? id)
+        {
+            if (id == null)
+                return new ContentResult { Content = "null" };
+
+            return new ContentResult { Content = id.ToString() };
+        }
     }
 }
