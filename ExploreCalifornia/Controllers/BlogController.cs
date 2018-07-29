@@ -1,6 +1,7 @@
 ﻿using ExploreCalifornia.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 
 namespace ExploreCalifornia.Controllers
 {
@@ -16,23 +17,10 @@ namespace ExploreCalifornia.Controllers
         [Route("")]
         public IActionResult Index()
         {
-            var posts = new[]
-            {
-                new Post
-                {
-                    Title = "My blog post",
-                    Posted = DateTime.Now,
-                    Author = "Jess Chadwick",
-                    Body = "This is a great blog post, don't you think?"
-                },
-                new Post
-                {
-                    Title = "My second blog post",
-                    Posted = DateTime.Now,
-                    Author = "Jess Chadwick",
-                    Body = "This is ANOTHER a great blog post, don't you think?"
-                }
-            };
+            var posts = _db.Posts.
+                OrderByDescending(x => x.Posted).
+                Take(5).
+                ToList();
 
             return View(posts);
         }
@@ -40,15 +28,7 @@ namespace ExploreCalifornia.Controllers
         [Route("{year:min(2000)}/{month:range(1,12)}/{key}")]
         public IActionResult Post(int year, int month, string key)
         {
-            var post = new Post
-            {
-                Title = "My blog post",
-                Posted = DateTime.Now,
-                Author = "Jess Chadwick",
-                Body = "This is a great blog post, don't you think?"
-            };
-
-
+            var post = _db.Posts.FirstOrDefault(x => x.Key == key);
 
             return View(post);
         }
@@ -71,7 +51,12 @@ namespace ExploreCalifornia.Controllers
             _db.Posts.Add(post);
             _db.SaveChanges();
 
-            return View();
+            return RedirectToAction("Post", "Blog", new
+            {
+                year = post.Posted.Year,
+                month = post.Posted.Month,
+                key = post.Key
+            });
         }
     }
 }
