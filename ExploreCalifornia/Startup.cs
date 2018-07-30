@@ -26,8 +26,6 @@ namespace ExploreCalifornia
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<SpecialsDataContext>();
-
             services.AddTransient<FormattingService>();
 
             services.AddTransient<FeatureToggles>(f => new FeatureToggles
@@ -38,6 +36,12 @@ namespace ExploreCalifornia
             services.AddDbContext<BlogDataContext>(options =>
             {
                 var connectionString = configuration.GetConnectionString("BlogDataContext");
+                options.UseSqlServer(connectionString);
+            });
+
+            services.AddDbContext<SpecialsDataContext>(options =>
+            {
+                var connectionString = configuration.GetConnectionString("SpecialsDataContext");
                 options.UseSqlServer(connectionString);
             });
 
