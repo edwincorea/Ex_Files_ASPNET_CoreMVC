@@ -27,10 +27,9 @@ namespace ExploreCalifornia.api
 
         // GET api/posts/{postKey}/comments/5
         [HttpGet("{id}")]
-        public IActionResult Get(string postKey, int id)
+        public IActionResult Get(long id)
         {
-            var comment = _db.Comments.
-                FirstOrDefault(c => c.Post.Key == postKey && c.Id == id);
+            var comment = _db.Comments.FirstOrDefault(c => c.Id == id);
 
             if (comment == null)
                 return NotFound();
@@ -54,33 +53,31 @@ namespace ExploreCalifornia.api
             _db.Comments.Add(comment);
             _db.SaveChanges();
 
-            return Ok(comment);
+            return StatusCode(201, comment);
         }
 
         // PUT api/posts/{postKey}/5
         [HttpPut("{id}")]
-        public IActionResult Put(string postKey, int id, [FromBody]Comment comment)
+        public IActionResult Put(long id, [FromBody]Comment updatedComment)
         {
-            var commentDb = _db.Comments.
-                FirstOrDefault(c => c.Post.Key == postKey && c.Id == id);
+            var commentDb = _db.Comments.FirstOrDefault(c => c.Id == id);
 
             if (commentDb == null)
                 return NotFound();
 
-            commentDb.Body = comment.Body;
+            commentDb.Body = updatedComment.Body;
 
             _db.Comments.Update(commentDb);
             _db.SaveChanges();
 
-            return NoContent();
+            return StatusCode(200);
         }
 
         // DELETE api/posts/{postKey}/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(string postKey, int id)
+        public IActionResult Delete(long id)
         {
-            var commentDb = _db.Comments.
-                FirstOrDefault(c => c.Post.Key == postKey && c.Id == id);
+            var commentDb = _db.Comments.FirstOrDefault(c => c.Id == id);
 
             if (commentDb == null)
                 return NotFound();
@@ -88,7 +85,7 @@ namespace ExploreCalifornia.api
             _db.Comments.Remove(commentDb);
             _db.SaveChanges();
 
-            return NoContent();
+            return StatusCode(204);
         }
     }
 }
