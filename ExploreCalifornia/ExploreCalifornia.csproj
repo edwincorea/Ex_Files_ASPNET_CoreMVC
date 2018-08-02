@@ -35,10 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Update="Views\Shared\_Post.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
