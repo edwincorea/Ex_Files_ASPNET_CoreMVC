@@ -1,8 +1,7 @@
 ﻿using ExploreCalifornia.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,6 +46,15 @@ namespace ExploreCalifornia
                 options.UseSqlServer(connectionString);
             });
 
+            services.AddDbContext<IdentityDataContext>(options =>
+            {
+                var connectionString = configuration.GetConnectionString("IdentityDataContext");
+                options.UseSqlServer(connectionString);
+            });
+
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<IdentityDataContext>();
+
             services.AddMvc();
         }
 
@@ -72,6 +80,8 @@ namespace ExploreCalifornia
 
                 await next();
             });
+
+            app.UseAuthentication();
 
             app.UseMvc(routes => {
                 routes.MapRoute("Default", "{controller=Home}/{action=Index}/{id?}");
