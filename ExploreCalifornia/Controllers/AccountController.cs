@@ -8,11 +8,57 @@ namespace ExploreCalifornia.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly SignInManager<IdentityUser> _signinManager;
         private readonly UserManager<IdentityUser> _userManager;
-        public AccountController(UserManager<IdentityUser> userManager)
+
+        public AccountController(
+            SignInManager<IdentityUser> signinManager,
+            UserManager<IdentityUser> userManager)
         {
+            this._signinManager = signinManager;
             this._userManager = userManager;
         }
+
+        public IActionResult Login()
+        {
+            return View(new LoginViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel login, string returnUrl = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            var result = await this._signinManager.PasswordSignInAsync(
+                login.EmailAddress, login.Password,
+                login.RememberMe, false);
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Login Error!");
+                return View();
+            }
+
+            if (string.IsNullOrEmpty(returnUrl))
+                return RedirectToAction("Index", "Home");
+
+            return Redirect(returnUrl);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Logout(string returnUrl = null)
+        {
+            await this._signinManager.SignOutAsync();
+
+            if (string.IsNullOrEmpty(returnUrl))
+                return RedirectToAction("Index", "Home");
+
+            return Redirect(returnUrl);
+        }
+
 
         public IActionResult Register()
         {
